@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IKEA × UNIVERSAL STUDIOS 聯名主題樂園</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ikea-blue: #003399;
+    --ikea-yellow: #FFDA1A;
+    --sky-blue: #5BBFEF;
+    --warm-gold: #F5A623;
+    --soft-cream: #FFF8ED;
+    --deep-navy: #001A6E;
+    --light-blue: #D6EFFF;
+    --accent-pink: #FF9EB5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: #FFF8ED;
+    color: #1a1a2e;
+    overflow-x: hidden;
+  }
+
+  /* ===== NAVBAR ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0,51,153,0.15);
+    padding: 0 40px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+    font-size: 13px;
+    color: var(--ikea-blue);
+    text-decoration: none;
+  }
+
+  .ikea-badge {
+    background: var(--ikea-blue);
+    color: var(--ikea-yellow);
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+
+  .us-badge {
+    background: var(--deep-navy);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .nav-cross {
+    color: #aaa;
+    font-size: 16px;
+    margin: 0 4px;
+  }
+
+  .nav-subtitle {
+    font-size: 11px;
+    color: #666;
+    border-left: 1px solid #ddd;
+    padding-left: 10px;
+    margin-left: 4px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+
+  .nav-links a:hover { color: var(--ikea-blue); }
+
+  .nav-ticket-btn {
+    background: var(--ikea-yellow);
+    color: var(--ikea-blue);
+    font-weight: 900;
+    font-size: 13px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-ticket-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(255,218,26,0.6);
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    margin-top: 64px;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #001A6E 0%, #003399 25%, #1565C0 50%, #5BBFEF 80%, #B3E5FC 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px 80px;
+  }
+
+  /* Floating decorations */
+  .hero-deco {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .star {
+    width: 6px; height: 6px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    from { opacity: 0.3; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1.2); }
+  }
+
+  .balloon {
+    font-size: 36px;
+    animation: floatBalloon 6s ease-in-out infinite;
+  }
+
+  @keyframes floatBalloon {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+  }
+
+  .cloud {
+    background: rgba(255,255,255,0.15);
+    border-radius: 50px;
+    animation: driftCloud 15s linear infinite;
+  }
+
+  @keyframes driftCloud {
+    from { transform: translateX(-100px); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    to { transform: translateX(120vw); opacity: 0; }
+  }
+
+  /* Stars scattered */
+  .s1 { top: 15%; left: 8%; animation-delay: 0s; }
+  .s2 { top: 25%; left: 20%; animation-delay: 0.5s; }
+  .s3 { top: 10%; left: 40%; animation-delay: 1s; }
+  .s4 { top: 20%; right: 15%; animation-delay: 0.3s; }
+  .s5 { top: 35%; right: 8%; animation-delay: 0.8s; }
+  .s6 { top: 5%; right: 30%; animation-delay: 1.5s; }
+
+  .b1 { top: 8%; left: 5%; animation-delay: 0s; }
+  .b2 { top: 12%; right: 10%; animation-delay: 2s; }
+  .b3 { bottom: 20%; left: 3%; animation-delay: 1s; font-size: 28px; }
+
+  .c1 { width: 200px; height: 60px; top: 18%; left: -100px; animation-duration: 18s; animation-delay: 0s; }
+  .c2 { width: 150px; height: 45px; top: 35%; left: -100px; animation-duration: 22s; animation-delay: 5s; }
+  .c3 { width: 180px; height: 55px; top: 55%; left: -100px; animation-duration: 20s; animation-delay: 10s; }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 700px;
+  }
+
+  .hero-collab-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 8px 20px;
+    border-radius: 30px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(5px);
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .hero-collab-badge span {
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+
+  .hero-title-sub {
+    color: rgba(255,255,255,0.85);
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    animation: fadeDown 0.8s ease 0.1s both;
+  }
+
+  .hero-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(52px, 8vw, 88px);
+    color: var(--ikea-yellow);
+    line-height: 1.1;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    margin-bottom: 16px;
+    animation: fadeDown 0.8s ease 0.2s both;
+  }
+
+  .hero-collab-label {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--ikea-blue), #1565C0);
+    color: white;
+    font-weight: 900;
+    font-size: 15px;
+    padding: 8px 24px;
+    border-radius: 6px;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+    border: 2px solid rgba(255,255,255,0.3);
+    animation: fadeDown 0.8s ease 0.3s both;
+  }
+
+  .hero-desc {
+    color: rgba(255,255,255,0.9);
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 36px;
+    animation: fadeDown 0.8s ease 0.4s both;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeDown 0.8s ease 0.5s both;
+  }
+
+  .btn-primary {
+    background: var(--ikea-yellow);
+    color: var(--ikea-blue);
+    font-weight: 900;
+    font-size: 16px;
+    padding: 16px 36px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 6px 24px rgba(255,218,26,0.5);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 32px rgba(255,218,26,0.7);
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 16px 36px;
+    border-radius: 50px;
+    border: 2px solid rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+    backdrop-filter: blur(5px);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-3px);
+  }
+
+  .hero-family-badge {
+    position: absolute;
+    right: 40px;
+    bottom: 100px;
+    background: linear-gradient(135deg, var(--ikea-yellow), #FFB300);
+    color: var(--ikea-blue);
+    padding: 16px 20px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.3s;
+    animation: fadeDown 1s ease 0.7s both;
+    z-index: 3;
+  }
+
+  .hero-family-badge:hover { transform: scale(1.05) rotate(-1deg); }
+  .hero-family-badge .big { font-size: 20px; display: block; margin: 4px 0; }
+  .hero-family-badge .join-btn {
+    display: block;
+    margin-top: 8px;
+    background: var(--ikea-blue);
+    color: var(--ikea-yellow);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+
+  /* Decorative rides at bottom of hero */
+  .hero-ride-deco {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 120px;
+    background: linear-gradient(to top, rgba(255,248,237,0.8), transparent);
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== SECTION BASE ===== */
+  section {
+    padding: 80px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-wrapper {
+    background: white;
+    padding: 80px 0;
+  }
+
+  .section-wrapper.blue-bg {
+    background: linear-gradient(135deg, #EEF4FF 0%, #F5F0FF 100%);
+  }
+
+  .section-wrapper.cream-bg {
+    background: var(--soft-cream);
+  }
+
+  .section-title {
+    text-align: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 40px;
+    color: var(--ikea-blue);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .section-title::before,
+  .section-title::after {
+    content: '✦';
+    color: var(--ikea-yellow);
+    font-size: 20px;
+  }
+
+  .section-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 50px;
+  }
+
+  /* ===== ATTRACTIONS ===== */
+  .attractions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .attraction-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,51,153,0.1);
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .attraction-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0,51,153,0.2);
+  }
+
+  .attraction-img {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .att1 { background: linear-gradient(135deg, #FFE5E5, #FFB3C6); }
+  .att2 { background: linear-gradient(135deg, #E5F0FF, #B3D4FF); }
+  .att3 { background: linear-gradient(135deg, #E5FFE8, #B3F0BD); }
+  .att4 { background: linear-gradient(135deg, #FFF5E5, #FFD9B3); }
+
+  .new-badge {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: #FF4757;
+    color: white;
+    font-weight: 900;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+
+  .attraction-info {
+    padding: 16px;
+  }
+
+  .attraction-info h3 {
+    font-weight: 900;
+    font-size: 15px;
+    color: var(--ikea-blue);
+    margin-bottom: 8px;
+  }
+
+  .attraction-info p {
+    color: #666;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .see-all-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    background: var(--ikea-blue);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 36px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    gap: 8px;
+  }
+
+  .see-all-btn:hover {
+    background: #002277;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,51,153,0.3);
+  }
+
+  /* ===== DINING ===== */
+  .dining-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-bottom: 40px;
+  }
+
+  .dining-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,51,153,0.1);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .dining-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,51,153,0.15);
+  }
+
+  .dining-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .dining-card-header h3 {
+    font-weight: 900;
+    font-size: 18px;
+    color: var(--ikea-blue);
+  }
+
+  .dining-food-img {
+    width: 100%;
+    height: 160px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    gap: 10px;
+  }
+
+  .food-bg1 { background: linear-gradient(135deg, #FFF3E0, #FFE0B2); }
+  .food-bg2 { background: linear-gradient(135deg, #F3E5F5, #E1BEE7); }
+
+  .menu-list {
+    list-style: none;
+  }
+
+  .menu-list li {
+    padding: 6px 0;
+    font-size: 14px;
+    color: #444;
+    border-bottom: 1px dashed #eee;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .menu-list li::before {
+    content: '•';
+    color: var(--ikea-blue);
+    font-weight: 900;
+  }
+
+  .dining-featured {
+    background: linear-gradient(135deg, #E8F4FD, #D6EAF8);
+  }
+
+  /* ===== SHOP ===== */
+  .shop-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .shop-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,51,153,0.08);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .shop-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0,51,153,0.15);
+  }
+
+  .shop-img {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    gap: 8px;
+  }
+
+  .shop1 { background: linear-gradient(135deg, #FFF8DC, #FFE066); }
+  .shop2 { background: linear-gradient(135deg, #E8F5E9, #A5D6A7); }
+  .shop3 { background: linear-gradient(135deg, #E3F2FD, #90CAF9); }
+  .shop4 { background: linear-gradient(135deg, #FCE4EC, #F48FB1); }
+
+  .shop-info {
+    padding: 16px;
+  }
+
+  .shop-info h3 {
+    font-weight: 900;
+    font-size: 14px;
+    color: var(--ikea-blue);
+    margin-bottom: 6px;
+  }
+
+  .shop-info p {
+    color: #888;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* ===== CTA BANNER ===== */
+  .cta-banner {
+    background: linear-gradient(135deg, #001A6E 0%, #003399 40%, #1565C0 100%);
+    padding: 80px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(255,218,26,0.1) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(91,191,239,0.1) 0%, transparent 60%);
+  }
+
+  .cta-banner-content {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .cta-banner h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 42px;
+    color: var(--ikea-yellow);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .cta-banner p {
+    color: rgba(255,255,255,0.85);
+    font-size: 16px;
+    margin-bottom: 32px;
+  }
+
+  /* ===== INFO FOOTER ===== */
+  .info-bar {
+    background: #F5F5F5;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    max-width: 200px;
+  }
+
+  .info-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--ikea-blue);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    color: white;
+  }
+
+  .info-text h4 {
+    font-weight: 900;
+    font-size: 13px;
+    color: var(--ikea-blue);
+    margin-bottom: 4px;
+  }
+
+  .info-text p {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--deep-navy);
+    color: white;
+    padding: 40px;
+  }
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer-links-group h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ikea-yellow);
+    margin-bottom: 12px;
+  }
+
+  .footer-links-group a {
+    display: block;
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    text-decoration: none;
+    padding: 3px 0;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+
+  .footer-links-group a:hover { color: white; }
+
+  .social-links {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .social-btn {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .social-btn:hover { background: rgba(255,255,255,0.25); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 20px;
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: white;
+    border-radius: 24px;
+    max-width: 480px;
+    width: 90%;
+    padding: 40px;
+    transform: scale(0.9);
+    transition: transform 0.3s;
+    position: relative;
+  }
+
+  .modal-overlay.active .modal {
+    transform: scale(1);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: #f5f5f5;
+    border: none;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 28px;
+    color: var(--ikea-blue);
+    margin-bottom: 8px;
+  }
+
+  .modal p { color: #666; margin-bottom: 20px; line-height: 1.6; }
+
+  .modal-ticket-options {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .ticket-opt {
+    flex: 1;
+    border: 2px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .ticket-opt:hover, .ticket-opt.selected {
+    border-color: var(--ikea-blue);
+    background: #EEF4FF;
+  }
+
+  .ticket-opt .price {
+    font-weight: 900;
+    font-size: 22px;
+    color: var(--ikea-blue);
+  }
+
+  .ticket-opt .type {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  .modal-confirm-btn {
+    width: 100%;
+    background: var(--ikea-yellow);
+    color: var(--ikea-blue);
+    font-weight: 900;
+    font-size: 16px;
+    padding: 16px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .modal-confirm-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255,218,26,0.5);
+  }
+
+  /* ===== SCROLL ANIMATIONS ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== TOAST NOTIFICATION ===== */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ikea-blue);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 3000;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 8px 24px rgba(0,51,153,0.3);
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .attractions-grid { grid-template-columns: repeat(2, 1fr); }
+    .shop-grid { grid-template-columns: repeat(2, 1fr); }
+    .dining-layout { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .hero-family-badge { display: none; }
+    .info-bar { gap: 30px; }
+  }
+
+  @media (max-width: 560px) {
+    .attractions-grid { grid-template-columns: 1fr; }
+    .shop-grid { grid-template-columns: repeat(2, 1fr); }
+    section { padding: 50px 20px; }
+    .hero { padding: 40px 20px 60px; }
+    .hero-title { font-size: 46px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="ticketModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2>🎟️ 立即購票</h2>
+    <p>選擇你的入場票種，開啟與 IKEA × UNIVERSAL STUDIOS 的夢幻之旅！</p>
+    <div class="modal-ticket-options">
+      <div class="ticket-opt selected" onclick="selectTicket(this)">
+        <div class="price">NT$1,290</div>
+        <div class="type">一日券</div>
+      </div>
+      <div class="ticket-opt" onclick="selectTicket(this)">
+        <div class="price">NT$1,890</div>
+        <div class="type">二日券</div>
+      </div>
+      <div class="ticket-opt" onclick="selectTicket(this)">
+        <div class="price">NT$2,490</div>
+        <div class="type">年票</div>
+      </div>
+    </div>
+    <button class="modal-confirm-btn" onclick="confirmTicket()">確認購票 →</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="ikea-badge">IKEA</span>
+    <span class="nav-cross">×</span>
+    <span class="us-badge">UNIVERSAL<br>STUDIOS</span>
+    <span class="nav-subtitle">聯名主題樂園</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about" onclick="scrollTo('about')">樂園介紹</a></li>
+    <li><a href="#attractions" onclick="scrollTo('attractions')">遊樂設施</a></li>
+    <li><a href="#dining" onclick="scrollTo('dining')">美食餐廳</a></li>
+    <li><a href="#shop" onclick="scrollTo('shop')">紀念品店</a></li>
+    <li><a href="#info" onclick="scrollTo('info')">票價資訊</a></li>
+    <li><a href="#info" onclick="scrollTo('info')">交通指南</a></li>
+  </ul>
+  <button class="nav-ticket-btn" onclick="openModal()">立即購票</button>
+</nav>
+
+<!-- HERO -->
+<div id="about">
+  <div class="hero">
+    <!-- Decorative stars -->
+    <div class="hero-deco star s1"></div>
+    <div class="hero-deco star s2"></div>
+    <div class="hero-deco star s3"></div>
+    <div class="hero-deco star s4"></div>
+    <div class="hero-deco star s5"></div>
+    <div class="hero-deco star s6"></div>
+    <!-- Balloons -->
+    <div class="hero-deco balloon b1">🎈</div>
+    <div class="hero-deco balloon b2">🎠</div>
+    <div class="hero-deco balloon b3">⭐</div>
+    <!-- Clouds -->
+    <div class="hero-deco cloud c1"></div>
+    <div class="hero-deco cloud c2"></div>
+    <div class="hero-deco cloud c3"></div>
+
+    <div class="hero-content">
+      <div class="hero-collab-badge">
+        <span class="ikea-badge" style="font-size:14px">IKEA</span>
+        <span style="color:white; font-size:14px">×</span>
+        <span style="color:white;font-size:11px;font-weight:700;letter-spacing:2px">UNIVERSAL STUDIOS</span>
+      </div>
+      <p class="hero-title-sub">歡迎來到</p>
+      <h1 class="hero-title">最有家的樂園</h1>
+      <div class="hero-collab-label">IKEA × UNIVERSAL STUDIOS</div>
+      <p class="hero-desc">
+        熟悉的家，變成了夢幻樂園！<br>
+        讓可愛的夥伴們，陪你一起玩翻天！
+      </p>
+      <div class="hero-cta-group">
+        <button class="btn-primary" onclick="openModal()">立即購票 🎟️</button>
+        <button class="btn-secondary" onclick="smoothScrollTo('attractions')">探索設施 ↓</button>
+      </div>
+    </div>
+
+    <div class="hero-family-badge" onclick="showToast('IKEA Family 會員專屬優惠！享受 9 折優惠 🎉')">
+      <span>IKEA Family 會員</span>
+      <span class="big">9折優惠</span>
+      <span>享樂園專屬價格</span>
+      <span class="join-btn">立即加入 ▶</span>
+    </div>
+
+    <div class="hero-ride-deco"></div>
+  </div>
+</div>
+
+<!-- ATTRACTIONS -->
+<div class="section-wrapper" id="attractions">
+  <section>
+    <h2 class="section-title reveal">遊樂設施</h2>
+    <p class="section-subtitle reveal">把家變成遊樂園，讓想像力動起來！</p>
+
+    <div class="attractions-grid">
+      <div class="attraction-card reveal" onclick="showToast('彈簧床雲霄飛車 — 刺激指數 ★★★★★')">
+        <div class="attraction-img att1">
+          🛏️🎢
+          <span class="new-badge">NEW!</span>
+        </div>
+        <div class="attraction-info">
+          <h3>彈簧床雲霄飛車</h3>
+          <p>彈簧床變身雲霄飛車！搭上最柔軟的雲霄飛車，還有各種動物夥伴陪你尖叫！</p>
+        </div>
+      </div>
+
+      <div class="attraction-card reveal" onclick="showToast('BLÅHAJ 旋轉木馬 — 可愛指數 ★★★★★')">
+        <div class="attraction-img att2">
+          🦈🎠
+          <span class="new-badge">NEW!</span>
+        </div>
+        <div class="attraction-info">
+          <h3>BLÅHAJ 旋轉木馬</h3>
+          <p>可愛的 BLÅHAJ 鯊魚們帶你旋轉！快樂無限大！</p>
+        </div>
+      </div>
+
+      <div class="attraction-card reveal" onclick="showToast('魔法衣櫃跳樓機 — 驚險指數 ★★★★☆')">
+        <div class="attraction-img att3">
+          🚪🪄
+          <span class="new-badge">NEW!</span>
+        </div>
+        <div class="attraction-info">
+          <h3>魔法衣櫃跳樓機</h3>
+          <p>打開你的櫃子的那一刻，驚喜尖叫之旅就此開始！</p>
+        </div>
+      </div>
+
+      <div class="attraction-card reveal" onclick="showToast('IKEA 氣球飛行 — 浪漫指數 ★★★★★')">
+        <div class="attraction-img att4">
+          🎈🧸
+          <span class="new-badge">NEW!</span>
+        </div>
+        <div class="attraction-info">
+          <h3>IKEA 氣球飛行</h3>
+          <p>搭乘可愛氣球，從高空鳥瞰整個樂園！</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="see-all-btn" onclick="showToast('更多設施即將公開！敬請期待 🎉')">
+      查看所有遊樂設施 ▶
+    </button>
+  </section>
+</div>
+
+<!-- DINING -->
+<div class="section-wrapper blue-bg" id="dining">
+  <section>
+    <h2 class="section-title reveal">美食餐廳</h2>
+    <p class="section-subtitle reveal">來自瑞典的美味，還有聯名限定餐點！</p>
+
+    <div class="dining-layout">
+      <div class="dining-card reveal" onclick="showToast('經典瑞典美食 — 美味指數 ★★★★★')">
+        <div class="dining-card-header">
+          <div style="font-size:24px">🇸🇪</div>
+          <h3>經典瑞典美食</h3>
+        </div>
+        <div class="dining-food-img food-bg1">🍝🥩</div>
+        <p style="color:#666;font-size:13px;margin-bottom:12px">在樂園裡也能品嚐 IKEA 餐廳的經典美味！</p>
+        <ul class="menu-list">
+          <li>瑞典肉丸</li>
+          <li>鮭魚菲力</li>
+          <li>奶油薯泥</li>
+          <li>蘋果派</li>
+        </ul>
+      </div>
+
+      <div class="dining-card dining-featured reveal" onclick="showToast('UNIVERSAL 聯名限定 — 話題指數 ★★★★★')">
+        <div class="dining-card-header">
+          <div style="font-size:24px">🎬</div>
+          <h3>UNIVERSAL 聯名限定</h3>
+        </div>
+        <div class="dining-food-img food-bg2">🍦🍱</div>
+        <p style="color:#555;font-size:13px;margin-bottom:12px">只有這裡吃得到的夢幻餐點！</p>
+        <ul class="menu-list">
+          <li>小小兵咖喱飯</li>
+          <li>BLÅHAJ 藍色冰淇淋聖代</li>
+          <li>史努比熱狗堡套餐</li>
+        </ul>
+      </div>
+    </div>
+
+    <button class="see-all-btn" onclick="showToast('查看完整菜單 🍽️')">
+      查看所有餐點 ▶
+    </button>
+  </section>
+</div>
+
+<!-- SHOP -->
+<div class="section-wrapper cream-bg" id="shop">
+  <section>
+    <h2 class="section-title reveal">紀念品店</h2>
+    <p class="section-subtitle reveal">把快樂帶回家！樂園限定商品等你來收藏！</p>
+
+    <div class="shop-grid">
+      <div class="shop-card reveal" onclick="showToast('樂園限定絨毛玩偶 — 超多祥物限定造型！')">
+        <div class="shop-img shop1">🐻🐼🦈</div>
+        <div class="shop-info">
+          <h3>樂園限定絨毛玩偶</h3>
+          <p>超多祥物限定造型！</p>
+        </div>
+      </div>
+
+      <div class="shop-card reveal" onclick="showToast('聯名限定生活小物 — 實用又可愛！')">
+        <div class="shop-img shop2">👜🎒☕</div>
+        <div class="shop-info">
+          <h3>聯名限定生活小物</h3>
+          <p>實用又可愛的居家好物！</p>
+        </div>
+      </div>
+
+      <div class="shop-card reveal" onclick="showToast('限量服飾系列 — 穿上也超有家的感覺！')">
+        <div class="shop-img shop3">👕🧢👗</div>
+        <div class="shop-info">
+          <h3>限量服飾系列</h3>
+          <p>穿上也超有家的感覺！</p>
+        </div>
+      </div>
+
+      <div class="shop-card reveal" onclick="showToast('收藏級紀念品 — 只送不賣的限量收藏！')">
+        <div class="shop-img shop4">🔮🏆🎁</div>
+        <div class="shop-info">
+          <h3>收藏級紀念品</h3>
+          <p>只送不賣的限量收藏！</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="see-all-btn" onclick="showToast('更多商品即將上架！🛍️')">
+      查看更多商品 ▶
+    </button>
+  </section>
+</div>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="cta-banner-content reveal">
+    <h2>在熟悉的家中，<br>展開最奇幻的冒險！</h2>
+    <p>快來與 IKEA 和 UNIVERSAL STUDIOS 的可愛夥伴們一起創造難忘的回憶吧！</p>
+    <button class="btn-primary" onclick="openModal()" style="font-size:17px;padding:18px 48px;">
+      立即購票，開啟夢幻旅程 ✨
+    </button>
+  </div>
+</div>
+
+<!-- INFO BAR -->
+<div class="info-bar reveal" id="info">
+  <div class="info-item">
+    <div class="info-icon">🕙</div>
+    <div class="info-text">
+      <h4>營業時間</h4>
+      <p>09:00 – 21:00<br>（依季節調整）</p>
+    </div>
+  </div>
+  <div class="info-item">
+    <div class="info-icon">📍</div>
+    <div class="info-text">
+      <h4>樂園地點</h4>
+      <p>Universal Studios Japan<br>內特別園區</p>
+    </div>
+  </div>
+  <div class="info-item">
+    <div class="info-icon">🚃</div>
+    <div class="info-text">
+      <h4>交通方式</h4>
+      <p>搭乘 JR 環球城站<br>步行即可抵達</p>
+    </div>
+  </div>
+  <div class="info-item">
+    <div class="info-icon">💛</div>
+    <div class="info-text">
+      <h4>貼心服務</h4>
+      <p>提供寄物、嬰兒車租借<br>與無障礙設施</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">
+        <span class="ikea-badge">IKEA</span>
+        <span style="color:rgba(255,255,255,0.6)">×</span>
+        <span class="us-badge">UNIVERSAL<br>STUDIOS</span>
+      </div>
+      <p style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:8px">聯名主題樂園</p>
+      <div class="social-links" style="margin-top:16px">
+        <div class="social-btn" onclick="showToast('Facebook 粉絲專頁 👍')">f</div>
+        <div class="social-btn" onclick="showToast('Instagram 追蹤我們 📸')">📸</div>
+        <div class="social-btn" onclick="showToast('Line 官方帳號 💬')">🟢</div>
+        <div class="social-btn" onclick="showToast('YouTube 頻道 ▶')">▶</div>
+      </div>
+    </div>
+    <div class="footer-links-group">
+      <h4>樂園資訊</h4>
+      <a onclick="smoothScrollTo('about')">樂園介紹</a>
+      <a onclick="smoothScrollTo('attractions')">遊樂設施</a>
+      <a onclick="smoothScrollTo('dining')">美食餐廳</a>
+      <a onclick="smoothScrollTo('shop')">紀念品店</a>
+    </div>
+    <div class="footer-links-group">
+      <h4>票務服務</h4>
+      <a onclick="openModal()">票價資訊</a>
+      <a onclick="openModal()">線上訂票</a>
+      <a onclick="showToast('交通指南頁面')">交通指南</a>
+      <a onclick="showToast('常見問題頁面')">常見問題</a>
+    </div>
+    <div class="footer-links-group">
+      <h4>追蹤我們</h4>
+      <a onclick="showToast('Facebook')">Facebook</a>
+      <a onclick="showToast('Instagram')">Instagram</a>
+      <a onclick="showToast('Line 官方帳號')">Line 官方帳號</a>
+      <a onclick="showToast('YouTube')">YouTube</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © Inter IKEA Systems B.V. 2024 &nbsp;·&nbsp; © Universal Studios. All rights reserved.&nbsp;·&nbsp; 本網站為創意展示用途
+  </div>
+</footer>
+
+<script>
+  // Modal
+  function openModal() {
+    document.getElementById('ticketModal').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('ticketModal').classList.remove('active');
+  }
+
+  document.getElementById('ticketModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  function selectTicket(el) {
+    document.querySelectorAll('.ticket-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function confirmTicket() {
+    closeModal();
+    showToast('🎉 購票成功！歡迎來到 IKEA × UNIVERSAL STUDIOS 聯名主題樂園！');
+  }
+
+  // Toast
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // Smooth scroll
+  function smoothScrollTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
