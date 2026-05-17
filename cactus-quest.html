@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🌵 仙人掌大冒險</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Noto+Sans+TC:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --sand: #f5c87a;
+    --cactus: #4caf50;
+    --danger: #e74c3c;
+    --heart: #ff4757;
+    --water: #3498db;
+    --sky: #87ceeb;
+    --ground: #a0785a;
+    --tile: #e8e0d8;
+  }
+
+  body {
+    font-family: 'Nunito', 'Noto Sans TC', sans-serif;
+    background: #1a1a2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    user-select: none;
+    touch-action: none;
+  }
+
+  #game-wrapper {
+    position: relative;
+    width: 390px;
+    height: 700px;
+    background: #fff;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s;
+  }
+  .screen.hidden { opacity: 0; pointer-events: none; }
+
+  /* ── TITLE SCREEN ── */
+  #title-screen {
+    background: linear-gradient(160deg, #ffeaa7 0%, #fdcb6e 40%, #e17055 100%);
+  }
+  .title-sun {
+    width: 90px; height: 90px;
+    background: radial-gradient(circle, #fff700, #ffaa00);
+    border-radius: 50%;
+    box-shadow: 0 0 40px #ffaa00, 0 0 80px #ffaa0066;
+    animation: pulse 2s ease-in-out infinite;
+    margin-bottom: 10px;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+  .title-cactus { font-size: 80px; margin: 10px 0; animation: bounce 1.5s ease-in-out infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  #title-screen h1 {
+    font-size: 28px; font-weight: 900; color: #2d3436;
+    text-shadow: 3px 3px 0 #fff700; margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  #title-screen p { font-size: 14px; color: #636e72; margin-bottom: 30px; text-align: center; padding: 0 20px; }
+
+  .btn {
+    padding: 14px 36px; font-size: 18px; font-weight: 900;
+    border: none; border-radius: 50px; cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    font-family: 'Nunito', sans-serif;
+  }
+  .btn:active { transform: scale(0.94); }
+  .btn-start {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+    color: #fff; box-shadow: 0 6px 20px #00b89466;
+  }
+  .btn-retry {
+    background: linear-gradient(135deg, #fdcb6e, #e17055);
+    color: #fff; box-shadow: 0 6px 20px #e1705566;
+  }
+  .btn-next {
+    background: linear-gradient(135deg, #74b9ff, #0984e3);
+    color: #fff; box-shadow: 0 6px 20px #0984e366;
+  }
+
+  /* ── HUD ── */
+  #hud {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 60px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 100;
+    border-bottom: 2px solid rgba(0,0,0,0.06);
+  }
+  #level-label { font-size: 15px; font-weight: 900; color: #2d3436; }
+  #hearts { display: flex; gap: 4px; }
+  .heart { font-size: 24px; transition: transform 0.3s; }
+  .heart.lost { filter: grayscale(1); opacity: 0.3; }
+  #score-label { font-size: 13px; color: #636e72; font-weight: 700; }
+
+  /* ── CANVAS ── */
+  #game-canvas {
+    position: absolute;
+    top: 60px; left: 0;
+    width: 390px;
+    height: 640px;
+    display: block;
+  }
+
+  /* ── SWIPE HINT ── */
+  #swipe-hint {
+    position: absolute;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 13px; font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 30px;
+    pointer-events: none;
+    transition: opacity 0.5s;
+    z-index: 200;
+  }
+
+  /* ── OVERLAY SCREENS ── */
+  #win-screen, #lose-screen, #complete-screen {
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(12px);
+    z-index: 300;
+    gap: 12px;
+  }
+  .overlay-emoji { font-size: 70px; animation: pop 0.5s cubic-bezier(0.36,0.07,0.19,0.97); }
+  @keyframes pop { 0%{transform:scale(0)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .overlay-title { font-size: 26px; font-weight: 900; color: #2d3436; }
+  .overlay-sub { font-size: 14px; color: #636e72; text-align: center; padding: 0 30px; }
+
+  /* ── DIRECTION ARROWS (always visible helper) ── */
+  #arrow-pad {
+    position: absolute;
+    bottom: 18px; left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(3, 52px);
+    grid-template-rows: repeat(3, 52px);
+    gap: 4px;
+    z-index: 200;
+    opacity: 0.75;
+  }
+  .arrow-btn {
+    background: rgba(255,255,255,0.88);
+    border: 2px solid rgba(0,0,0,0.1);
+    border-radius: 14px;
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.1s, transform 0.1s;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  }
+  .arrow-btn:active { background: #74b9ff; transform: scale(0.9); }
+  .arrow-blank { visibility: hidden; }
+</style>
+</head>
+<body>
+<div id="game-wrapper">
+
+  <!-- TITLE SCREEN -->
+  <div class="screen" id="title-screen">
+    <div class="title-sun"></div>
+    <div class="title-cactus">🌵</div>
+    <h1>仙人掌大冒險</h1>
+    <p>我已經一個月沒被澆水了！<br>我要自己去找水喝！💧</p>
+    <button class="btn btn-start" onclick="startGame()">開始冒險 🌵</button>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud" style="display:none">
+    <div id="level-label">第 1 關</div>
+    <div id="hearts">
+      <span class="heart" id="h1">❤️</span>
+      <span class="heart" id="h2">❤️</span>
+      <span class="heart" id="h3">❤️</span>
+    </div>
+    <div id="score-label">步數: 0</div>
+  </div>
+
+  <!-- GAME CANVAS -->
+  <canvas id="game-canvas" style="display:none"></canvas>
+
+  <!-- ARROW PAD -->
+  <div id="arrow-pad" style="display:none">
+    <div class="arrow-blank"></div>
+    <div class="arrow-btn" id="btn-up" onclick="movePlayer(0,-1)">⬆️</div>
+    <div class="arrow-blank"></div>
+    <div class="arrow-btn" id="btn-left" onclick="movePlayer(-1,0)">⬅️</div>
+    <div class="arrow-blank"></div>
+    <div class="arrow-btn" id="btn-right" onclick="movePlayer(1,0)">➡️</div>
+    <div class="arrow-blank"></div>
+    <div class="arrow-btn" id="btn-down" onclick="movePlayer(0,1)">⬇️</div>
+    <div class="arrow-blank"></div>
+  </div>
+
+  <!-- WIN SCREEN -->
+  <div class="screen hidden" id="win-screen">
+    <div class="overlay-emoji">💧</div>
+    <div class="overlay-title">找到水了！</div>
+    <div class="overlay-sub" id="win-sub"></div>
+    <button class="btn btn-next" onclick="nextLevel()">下一關 ➡️</button>
+  </div>
+
+  <!-- LOSE SCREEN -->
+  <div class="screen hidden" id="lose-screen">
+    <div class="overlay-emoji">😵</div>
+    <div class="overlay-title">乾掉了…</div>
+    <div class="overlay-sub">仙人掌被撞倒了，重新挑戰！</div>
+    <button class="btn btn-retry" onclick="retryLevel()">再試一次 🔄</button>
+  </div>
+
+  <!-- COMPLETE SCREEN -->
+  <div class="screen hidden" id="complete-screen">
+    <div class="overlay-emoji">🎉</div>
+    <div class="overlay-title">全部完成！</div>
+    <div class="overlay-sub">仙人掌喝飽水了，<br>謝謝你的幫助！🌵💧</div>
+    <button class="btn btn-start" onclick="resetGame()">再玩一次</button>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  GAME ENGINE
+// ═══════════════════════════════════════════
+
+const TILE = 52; // px per grid cell
+const COLS = 7;
+const ROWS = 11;
+
+// Tile types
+const T = {
+  EMPTY: 0,
+  WALL: 1,
+  OBSTACLE: 2,  // static object (table, chair)
+  HUMAN: 3,     // dangerous moving human
+  WATER: 4,     // goal
+  DOOR: 5,      // passage
+  DECOR: 6,     // decoration (safe)
+  HUMAN_STATIC: 7, // static human (standing)
+  SLIPPERY: 8,  // wet floor – doubles movement
+};
+
+// ── LEVELS ──────────────────────────────────
+const LEVELS = [
+  // LEVEL 1: Living room → Kitchen sink
+  {
+    name: '第 1 關',
+    scene: '客廳 → 廚房',
+    desc: '穿越客廳，到廚房水龍頭喝水！',
+    bg: ['#f9f3e8', '#e8dfd0'],
+    cols: COLS, rows: ROWS,
+    playerStart: [3, 9],
+    goal: [3, 0],
+    goalEmoji: '🚰',
+    map: [
+      [1,1,1,4,1,1,1],  // row 0  (top – goal)
+      [1,0,0,0,0,0,1],
+      [1,0,2,0,2,0,1],  // chairs
+      [1,0,0,0,0,0,1],
+      [1,2,0,7,0,2,1],  // sofa & person
+      [1,0,0,0,0,0,1],
+      [1,0,2,0,2,0,1],
+      [1,0,0,0,0,0,1],
+      [1,6,0,0,0,6,1],  // plants (safe decor)
+      [1,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1],  // bottom wall
+    ],
+    humans: [
+      { x:3, y:4, dx:0, dy:0 }, // static person
+    ],
+    movingHumans: [
+      { x:1, y:6, dx:1, dy:0, timer:0, interval:3 },
+    ],
+  },
+
+  // LEVEL 2: Corridor → Restroom
+  {
+    name: '第 2 關',
+    scene: '走廊 → 洗手間',
+    desc: '穿過擁擠走廊，抵達洗手台！',
+    bg: ['#e8f4f8', '#d0e8f0'],
+    cols: COLS, rows: ROWS,
+    playerStart: [3, 10],
+    goal: [3, 0],
+    goalEmoji: '🚿',
+    map: [
+      [1,1,1,4,1,1,1],
+      [1,0,0,0,0,0,1],
+      [1,0,7,0,7,0,1],
+      [1,0,0,0,0,0,1],
+      [1,2,0,0,0,2,1],
+      [1,0,0,0,0,0,1],
+      [1,0,7,0,7,0,1],
+      [1,0,0,0,0,0,1],
+      [1,2,0,0,0,2,1],
+      [1,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1],
+    ],
+    humans: [
+      { x:2, y:2, dx:0, dy:0 },
+      { x:4, y:2, dx:0, dy:0 },
+      { x:2, y:6, dx:0, dy:0 },
+      { x:4, y:6, dx:0, dy:0 },
+    ],
+    movingHumans: [
+      { x:1, y:4, dx:1, dy:0, timer:0, interval:2 },
+      { x:5, y:8, dx:-1, dy:0, timer:0, interval:2 },
+    ],
+  },
+
+  // LEVEL 3: Restaurant → Sink
+  {
+    name: '第 3 關',
+    scene: '餐廳 → 洗手台',
+    desc: '躲開忙碌的服務生，找到洗手台！',
+    bg: ['#fff3e0', '#ffe0b2'],
+    cols: COLS, rows: ROWS,
+    playerStart: [1, 10],
+    goal: [5, 0],
+    goalEmoji: '🚰',
+    map: [
+      [1,1,1,1,1,4,1],
+      [1,0,0,0,0,0,1],
+      [1,2,2,0,2,2,1],  // tables
+      [1,0,0,0,0,0,1],
+      [1,0,2,2,2,0,1],
+      [1,0,0,0,0,0,1],
+      [1,2,2,0,2,2,1],
+      [1,0,0,0,0,0,1],
+      [1,0,2,0,2,0,1],
+      [1,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1],
+    ],
+    humans: [],
+    movingHumans: [
+      { x:3, y:1, dx:0, dy:1, timer:0, interval:2 },
+      { x:5, y:3, dx:0, dy:-1, timer:0, interval:2 },
+      { x:1, y:5, dx:0, dy:1, timer:0, interval:3 },
+      { x:3, y:7, dx:0, dy:-1, timer:0, interval:2 },
+    ],
+  },
+
+  // LEVEL 4: Office → Water Dispenser
+  {
+    name: '第 4 關',
+    scene: '辦公室 → 飲水機',
+    desc: '辦公室人很多，小心別被踩到！',
+    bg: ['#e8f5e9', '#c8e6c9'],
+    cols: COLS, rows: ROWS,
+    playerStart: [6, 10],
+    goal: [0, 5],
+    goalEmoji: '💧',
+    map: [
+      [1,1,1,1,1,1,1],
+      [1,0,2,0,2,0,1],
+      [1,0,0,0,0,0,1],
+      [1,2,0,2,0,2,1],
+      [1,0,0,0,0,0,1],
+      [4,0,0,0,0,0,1],  // goal on left wall
+      [1,0,0,0,0,0,1],
+      [1,2,0,2,0,2,1],
+      [1,0,0,0,0,0,1],
+      [1,0,2,0,2,0,1],
+      [1,1,1,1,1,1,1],
+    ],
+    humans: [],
+    movingHumans: [
+      { x:2, y:2, dx:1, dy:0, timer:0, interval:2 },
+      { x:4, y:4, dx:-1, dy:0, timer:0, interval:2 },
+      { x:3, y:6, dx:1, dy:0, timer:0, interval:3 },
+      { x:1, y:8, dx:1, dy:0, timer:0, interval:2 },
+      { x:5, y:3, dx:0, dy:1, timer:0, interval:3 },
+    ],
+  },
+
+  // LEVEL 5: Garden → Fountain
+  {
+    name: '第 5 關',
+    scene: '公園 → 噴水池',
+    desc: '穿越公園，到達大噴水池！',
+    bg: ['#e8f5e9', '#b2dfdb'],
+    cols: COLS, rows: ROWS,
+    playerStart: [3, 10],
+    goal: [3, 1],
+    goalEmoji: '⛲',
+    map: [
+      [1,1,1,1,1,1,1],
+      [1,1,1,4,1,1,1],  // fountain center
+      [1,0,0,0,0,0,1],
+      [6,0,2,0,2,0,6],  // benches + open sides
+      [1,0,0,0,0,0,1],
+      [6,0,0,0,0,0,6],
+      [1,0,2,0,2,0,1],
+      [1,0,0,0,0,0,1],
+      [6,0,0,0,0,0,6],
+      [1,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1],
+    ],
+    humans: [],
+    movingHumans: [
+      { x:2, y:3, dx:1, dy:0, timer:0, interval:2 },
+      { x:4, y:5, dx:-1, dy:0, timer:0, interval:2 },
+      { x:1, y:7, dx:1, dy:0, timer:0, interval:2 },
+      { x:5, y:9, dx:-1, dy:0, timer:0, interval:2 },
+      { x:3, y:5, dx:0, dy:1, timer:0, interval:3 },
+      { x:2, y:8, dx:0, dy:-1, timer:0, interval:2 },
+    ],
+  },
+];
+
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+let currentLevel = 0;
+let lives = 3;
+let steps = 0;
+let player = { x:0, y:0 };
+let movingHumans = [];
+let invincible = false;
+let animFrame = null;
+let gameActive = false;
+
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 390;
+canvas.height = 640;
+
+// ── EMOJI FONT SIZE ──────────────────────────
+const EM = TILE * 0.72;
+
+// ═══════════════════════════════════════════
+//  LEVEL INIT
+// ═══════════════════════════════════════════
+function loadLevel(idx) {
+  const lvl = LEVELS[idx];
+  player = { x: lvl.playerStart[0], y: lvl.playerStart[1] };
+  lives = 3;
+  steps = 0;
+  invincible = false;
+  gameActive = true;
+
+  // deep copy moving humans
+  movingHumans = lvl.movingHumans.map(h => ({...h}));
+
+  updateHUD();
+  hideAllScreens();
+  document.getElementById('hud').style.display = 'flex';
+  canvas.style.display = 'block';
+  document.getElementById('arrow-pad').style.display = 'grid';
+
+  cancelAnimationFrame(animFrame);
+  gameLoop();
+}
+
+// ═══════════════════════════════════════════
+//  GAME LOOP
+// ═══════════════════════════════════════════
+let lastTime = 0;
+let humanTick = 0;
+const HUMAN_INTERVAL_MS = 800;
+
+function gameLoop(ts = 0) {
+  if (!gameActive) return;
+  const dt = ts - lastTime;
+  lastTime = ts;
+
+  // advance human timer
+  humanTick += dt;
+  if (humanTick >= HUMAN_INTERVAL_MS) {
+    humanTick = 0;
+    tickMovingHumans();
+    checkCollision();
+  }
+
+  drawScene();
+  animFrame = requestAnimationFrame(gameLoop);
+}
+
+function tickMovingHumans() {
+  const lvl = LEVELS[currentLevel];
+  movingHumans.forEach(h => {
+    h.timer++;
+    if (h.timer < h.interval) return;
+    h.timer = 0;
+
+    const nx = h.x + h.dx;
+    const ny = h.y + h.dy;
+
+    // bounce off walls / obstacles
+    if (!inBounds(nx, ny) || isBlocking(lvl, nx, ny)) {
+      h.dx = -h.dx;
+      h.dy = -h.dy;
+    } else {
+      h.x = nx;
+      h.y = ny;
+    }
+  });
+}
+
+function inBounds(x, y) {
+  const lvl = LEVELS[currentLevel];
+  return x >= 0 && y >= 0 && x < lvl.cols && y < lvl.rows;
+}
+
+function isBlocking(lvl, x, y) {
+  const t = lvl.map[y][x];
+  return t === T.WALL || t === T.OBSTACLE;
+}
+
+// ═══════════════════════════════════════════
+//  PLAYER MOVEMENT
+// ═══════════════════════════════════════════
+function movePlayer(dx, dy) {
+  if (!gameActive) return;
+  const lvl = LEVELS[currentLevel];
+  const nx = player.x + dx;
+  const ny = player.y + dy;
+
+  if (!inBounds(nx, ny)) return;
+  const tile = lvl.map[ny][nx];
+  if (tile === T.WALL || tile === T.OBSTACLE) return;
+
+  player.x = nx;
+  player.y = ny;
+  steps++;
+  updateHUD();
+
+  // check goal
+  if (nx === lvl.goal[0] && ny === lvl.goal[1]) {
+    winLevel();
+    return;
+  }
+
+  checkCollision();
+}
+
+function checkCollision() {
+  if (invincible || !gameActive) return;
+  const lvl = LEVELS[currentLevel];
+
+  // static humans
+  const hitStatic = lvl.humans.some(h => h.x === player.x && h.y === player.y);
+  // moving humans
+  const hitMoving = movingHumans.some(h => h.x === player.x && h.y === player.y);
+
+  if (hitStatic || hitMoving) {
+    takeDamage();
+  }
+}
+
+function takeDamage() {
+  if (invincible) return;
+  lives--;
+  updateHUD();
+  flashHeart();
+
+  invincible = true;
+  setTimeout(() => { invincible = false; }, 1500);
+
+  if (lives <= 0) {
+    loseLevel();
+  }
+}
+
+// ═══════════════════════════════════════════
+//  DRAWING
+// ═══════════════════════════════════════════
+const TILE_COLORS = {
+  [T.EMPTY]: '#f5f0e8',
+  [T.WALL]: '#8d6e63',
+  [T.OBSTACLE]: '#bcaaa4',
+  [T.WATER]: '#e3f2fd',
+  [T.DOOR]: '#fff9c4',
+  [T.DECOR]: '#c8e6c9',
+  [T.HUMAN_STATIC]: '#fce4ec',
+  [T.SLIPPERY]: '#e1f5fe',
+};
+
+const TILE_EMOJI = {
+  [T.WALL]: '🟫',
+  [T.OBSTACLE]: '🪑',
+  [T.WATER]: null, // drawn separately
+  [T.DECOR]: '🪴',
+  [T.HUMAN_STATIC]: '🧍',
+};
+
+const SCENE_EMOJIS = {
+  0: ['🛋️','🪴','🖼️'],
+  1: ['🚪','🪟','🧹'],
+  2: ['🍽️','🥢','🍜'],
+  3: ['💻','📋','☕'],
+  4: ['🌳','🌸','🌿'],
+};
+
+function drawScene() {
+  const lvl = LEVELS[currentLevel];
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // background gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  grad.addColorStop(0, lvl.bg[0]);
+  grad.addColorStop(1, lvl.bg[1]);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // tiles
+  for (let row = 0; row < lvl.rows; row++) {
+    for (let col = 0; col < lvl.cols; col++) {
+      const t = lvl.map[row][col];
+      const x = col * TILE + (canvas.width - lvl.cols * TILE) / 2;
+      const y = row * TILE + 4;
+
+      // tile bg
+      ctx.fillStyle = TILE_COLORS[t] || '#f5f0e8';
+      ctx.beginPath();
+      ctx.roundRect(x+1, y+1, TILE-2, TILE-2, 4);
+      ctx.fill();
+
+      // tile border
+      ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // goal tile
+      if (col === lvl.goal[0] && row === lvl.goal[1]) {
+        ctx.fillStyle = '#bbdefb';
+        ctx.beginPath();
+        ctx.roundRect(x+1, y+1, TILE-2, TILE-2, 4);
+        ctx.fill();
+        drawEmoji(lvl.goalEmoji, x + TILE/2, y + TILE/2, TILE*0.6);
+        continue;
+      }
+
+      // emoji decoration
+      if (t === T.WALL) {
+        ctx.fillStyle = '#795548';
+        ctx.beginPath();
+        ctx.roundRect(x+1, y+1, TILE-2, TILE-2, 4);
+        ctx.fill();
+      } else if (t === T.OBSTACLE) {
+        drawEmoji('🪑', x + TILE/2, y + TILE/2, EM);
+      } else if (t === T.DECOR) {
+        drawEmoji('🪴', x + TILE/2, y + TILE/2, EM);
+      } else if (t === T.HUMAN_STATIC) {
+        // drawn below
+      }
+    }
+  }
+
+  // static humans
+  lvl.humans.forEach(h => {
+    const x = h.x * TILE + (canvas.width - lvl.cols * TILE) / 2;
+    const y = h.y * TILE + 4;
+    drawEmoji('🧍', x + TILE/2, y + TILE/2, EM);
+  });
+
+  // moving humans
+  movingHumans.forEach(h => {
+    const x = h.x * TILE + (canvas.width - lvl.cols * TILE) / 2;
+    const y = h.y * TILE + 4;
+    ctx.save();
+    ctx.shadowColor = '#e74c3c44';
+    ctx.shadowBlur = 12;
+    drawEmoji('🚶', x + TILE/2, y + TILE/2, EM);
+    ctx.restore();
+  });
+
+  // player cactus (with blink when invincible)
+  if (!invincible || Math.floor(Date.now() / 200) % 2 === 0) {
+    const px = player.x * TILE + (canvas.width - lvl.cols * TILE) / 2;
+    const py = player.y * TILE + 4;
+    ctx.save();
+    ctx.shadowColor = '#00b89466';
+    ctx.shadowBlur = 16;
+    drawEmoji('🌵', px + TILE/2, py + TILE/2, TILE * 0.85);
+    ctx.restore();
+  }
+}
+
+function drawEmoji(emoji, cx, cy, size) {
+  ctx.font = `${size}px serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(emoji, cx, cy);
+}
+
+// ═══════════════════════════════════════════
+//  SWIPE DETECTION
+// ═══════════════════════════════════════════
+let touchStart = null;
+
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t = e.touches[0];
+  touchStart = { x: t.clientX, y: t.clientY };
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+  if (!touchStart) return;
+  const t = e.changedTouches[0];
+  const dx = t.clientX - touchStart.x;
+  const dy = t.clientY - touchStart.y;
+  touchStart = null;
+
+  if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return; // tap – ignore
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    movePlayer(dx > 0 ? 1 : -1, 0);
+  } else {
+    movePlayer(0, dy > 0 ? 1 : -1);
+  }
+}, { passive: false });
+
+// keyboard (desktop)
+document.addEventListener('keydown', e => {
+  const map = {
+    ArrowUp: [0,-1], ArrowDown: [0,1],
+    ArrowLeft: [-1,0], ArrowRight: [1,0],
+    w:[0,-1], s:[0,1], a:[-1,0], d:[1,0],
+  };
+  const dir = map[e.key];
+  if (dir) { e.preventDefault(); movePlayer(...dir); }
+});
+
+// ═══════════════════════════════════════════
+//  HUD
+// ═══════════════════════════════════════════
+function updateHUD() {
+  const lvl = LEVELS[currentLevel];
+  document.getElementById('level-label').textContent = lvl.name;
+  document.getElementById('score-label').textContent = `步數: ${steps}`;
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById(`h${i}`);
+    el.classList.toggle('lost', i > lives);
+  }
+}
+
+function flashHeart() {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById(`h${i}`);
+    el.style.transform = 'scale(1.4)';
+    setTimeout(() => el.style.transform = '', 300);
+  }
+}
+
+// ═══════════════════════════════════════════
+//  WIN / LOSE / FLOW
+// ═══════════════════════════════════════════
+function winLevel() {
+  gameActive = false;
+  cancelAnimationFrame(animFrame);
+  drawScene(); // final frame
+
+  const isLast = currentLevel >= LEVELS.length - 1;
+  if (isLast) {
+    showScreen('complete-screen');
+  } else {
+    document.getElementById('win-sub').textContent =
+      `用了 ${steps} 步，還剩 ${lives} 顆愛心！`;
+    showScreen('win-screen');
+    // replace btn
+    const btn = document.querySelector('#win-screen .btn');
+    btn.style.display = 'inline-block';
+  }
+}
+
+function loseLevel() {
+  gameActive = false;
+  cancelAnimationFrame(animFrame);
+  showScreen('lose-screen');
+}
+
+function nextLevel() {
+  currentLevel++;
+  if (currentLevel >= LEVELS.length) {
+    showScreen('complete-screen');
+    return;
+  }
+  hideAllScreens();
+  loadLevel(currentLevel);
+}
+
+function retryLevel() {
+  hideAllScreens();
+  loadLevel(currentLevel);
+}
+
+function startGame() {
+  currentLevel = 0;
+  hideAllScreens();
+  loadLevel(0);
+}
+
+function resetGame() {
+  currentLevel = 0;
+  showScreen('title-screen');
+  document.getElementById('hud').style.display = 'none';
+  canvas.style.display = 'none';
+  document.getElementById('arrow-pad').style.display = 'none';
+}
+
+function showScreen(id) {
+  ['win-screen','lose-screen','complete-screen','title-screen'].forEach(s => {
+    document.getElementById(s).classList.toggle('hidden', s !== id);
+  });
+}
+
+function hideAllScreens() {
+  ['win-screen','lose-screen','complete-screen','title-screen'].forEach(s => {
+    document.getElementById(s).classList.add('hidden');
+  });
+}
+</script>
+</body>
+</html>
